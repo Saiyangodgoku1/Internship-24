@@ -13,7 +13,8 @@ Approach:
   - The maximum path sum of the left subtree plus the value of the current node.
   - The maximum path sum of the right subtree plus the value of the current node.
   - The maximum path sum of the left subtree plus the maximum path sum of the right subtree plus the value of the current node.
-- During the calculation, we keep track of the maximum path sum encountered so far and update it if necessary.
+- During the calculation, we keep track of the maximum path sum encountered so far and update it if necessary.we return value when current node is not the starting point for maximum path sum
+thus if its parent was the start we want to give to current+max(cur->left,cur->right)
 - We return the maximum path sum encountered overall.
 
 Complexity Analysis:
