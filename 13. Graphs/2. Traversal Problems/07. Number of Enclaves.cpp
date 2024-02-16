@@ -19,31 +19,34 @@ COMPLEXITY ANALYSIS:
 */
 
 void dfs(int i, int j, vector<vector<int>>& vis){
+    // Check if the current cell is within the boundaries and is unvisited
     if(i >= 0 && i < vis.size() && j >= 0 && j < vis[0].size() && vis[i][j] == 1){
-        vis[i][j] = -1;
-        dfs(i + 1, j, vis);
-        dfs(i - 1, j, vis);
-        dfs(i, j + 1, vis);
-        dfs(i, j - 1, vis);
+        vis[i][j] = -1; // Mark the current cell as visited
+        // Recursively call DFS on the adjacent cells
+        dfs(i + 1, j, vis); // Down
+        dfs(i - 1, j, vis); // Up
+        dfs(i, j + 1, vis); // Right
+        dfs(i, j - 1, vis); // Left
     }
 }
 
 int numEnclaves(vector<vector<int>>& grid) {
-    int m = grid.size(), n = grid[0].size();
-    vector<vector<int>> vis(grid.begin(), grid.end());
+    int m = grid.size(); // Number of rows in the grid
+    int n = grid[0].size(); // Number of columns in the grid
+    vector<vector<int>> vis(grid.begin(), grid.end()); // Copy of the original grid to track visited cells
     
-    // Perform DFS from boundary cells
+    // Perform DFS from boundary cells (boundary cells with value 1)
     for(int i = 0; i < n; i++){
         if(vis[0][i] == 1)
-            dfs(0, i, vis);
+            dfs(0, i, vis); // Start DFS traversal from the top boundary
         if(vis[m - 1][i] == 1)
-            dfs(m - 1, i, vis);
+            dfs(m - 1, i, vis); // Start DFS traversal from the bottom boundary
     }
     for(int i = 0; i < m; i++){
         if(vis[i][0] == 1)
-            dfs(i, 0, vis);
+            dfs(i, 0, vis); // Start DFS traversal from the left boundary
         if(vis[i][n - 1] == 1)
-            dfs(i, n - 1, vis);
+            dfs(i, n - 1, vis); // Start DFS traversal from the right boundary
     }
     
     // Count the number of land cells that are not on the boundary
@@ -51,8 +54,8 @@ int numEnclaves(vector<vector<int>>& grid) {
     for(auto row : vis){
         for(auto col : row){
             if(col == 1)
-                ans++;
+                ans++; // Increment the count for each land cell that is not on the boundary
         }
     }
-    return ans;
+    return ans; // Return the total number of land cells that are not on the boundary
 }
