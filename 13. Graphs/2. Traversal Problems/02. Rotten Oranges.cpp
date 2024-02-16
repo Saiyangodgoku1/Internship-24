@@ -36,6 +36,7 @@ int orangesRotting(vector<vector<int>>& grid) {
     int ans = -1, fresh = 0, m = grid.size(), n = grid[0].size();
     queue<pair<int, int>> q;
 
+    // Counting fresh oranges and pushing rotten oranges into the queue
     for(int i = 0; i < m; i++) {
         for(int j = 0; j < n; j++) {
             if(grid[i][j] == 2) {
@@ -47,31 +48,36 @@ int orangesRotting(vector<vector<int>>& grid) {
         }
     }
 
+    // If there are no fresh oranges, return 0 (no need for rotting)
     if(fresh == 0) {
         return 0;
     }
 
+    // Direction arrays for moving up, down, left, and right
     vector<int> dr = {-1, 1, 0, 0};
     vector<int> dc = {0, 0, -1, 1};
 
+    // BFS traversal to rot oranges
     while(!q.empty()) {
-        int k = q.size();
+        int k = q.size(); // Number of oranges in the current minute
         while(k--) {
-            auto p = q.front();
+            auto p = q.front(); // Current orange position
             q.pop();
             int x = p.first, y = p.second;
 
+            // Checking adjacent cells for fresh oranges and rotting them
             for(int i = 0; i < 4; i++) {
                 int nx = x + dr[i], ny = y + dc[i];
                 if(nx >= 0 && nx < m && ny >= 0 && ny < n && grid[nx][ny] == 1) {
-                    grid[nx][ny] = 2;
-                    q.push({nx, ny});
-                    fresh--;
+                    grid[nx][ny] = 2; // Rot the fresh orange
+                    q.push({nx, ny}); // Add the newly rotten orange to the queue
+                    fresh--; // Decrease the count of fresh oranges
                 }
             }
         }
-        ans++;
+        ans++; // Increment the time/minute
     }
 
+    // If there are still fresh oranges left, return -1 (impossible to rot all oranges)
     return (fresh > 0) ? -1 : ans;
 }
