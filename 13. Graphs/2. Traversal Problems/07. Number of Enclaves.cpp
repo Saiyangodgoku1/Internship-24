@@ -18,44 +18,59 @@ COMPLEXITY ANALYSIS:
 - Space Complexity: O(m * n), where m is the number of rows and n is the number of columns in the matrix. We use additional space for the 'vis' matrix.
 */
 
-void dfs(int i, int j, vector<vector<int>>& vis){
-    // Check if the current cell is within the boundaries and is unvisited
-    if(i >= 0 && i < vis.size() && j >= 0 && j < vis[0].size() && vis[i][j] == 1){
-        vis[i][j] = -1; // Mark the current cell as visited
-        // Recursively call DFS on the adjacent cells
-        dfs(i + 1, j, vis); // Down
-        dfs(i - 1, j, vis); // Up
-        dfs(i, j + 1, vis); // Right
-        dfs(i, j - 1, vis); // Left
-    }
-}
-
-int numEnclaves(vector<vector<int>>& grid) {
-    int m = grid.size(); // Number of rows in the grid
-    int n = grid[0].size(); // Number of columns in the grid
-    vector<vector<int>> vis(grid.begin(), grid.end()); // Copy of the original grid to track visited cells
-    
-    // Perform DFS from boundary cells (boundary cells with value 1)
-    for(int i = 0; i < n; i++){
-        if(vis[0][i] == 1)
-            dfs(0, i, vis); // Start DFS traversal from the top boundary
-        if(vis[m - 1][i] == 1)
-            dfs(m - 1, i, vis); // Start DFS traversal from the bottom boundary
-    }
-    for(int i = 0; i < m; i++){
-        if(vis[i][0] == 1)
-            dfs(i, 0, vis); // Start DFS traversal from the left boundary
-        if(vis[i][n - 1] == 1)
-            dfs(i, n - 1, vis); // Start DFS traversal from the right boundary
-    }
-    
-    // Count the number of land cells that are not on the boundary
-    int ans = 0;
-    for(auto row : vis){
-        for(auto col : row){
-            if(col == 1)
-                ans++; // Increment the count for each land cell that is not on the boundary
+class Solution {
+public:
+    int numberOfEnclaves(vector<vector<int>> &grid) {
+        queue<pair<int,int>> q; // Queue to store boundary land cells
+        int n = grid.size(); // Number of rows in the grid
+        int m = grid[0].size(); // Number of columns in the grid
+        int vis[n][m] = {0}; // 2D array to track visited cells
+        
+        // Traverse boundary elements
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                // Check if the cell is on the boundary (first row, first column, last row, or last column)
+                if(i == 0 || j == 0 || i == n - 1 || j == m - 1) {
+                    // If it is a land cell, store it in the queue and mark it as visited
+                    if(grid[i][j] == 1) {
+                        q.push({i, j});
+                        vis[i][j] = 1;
+                    }
+                }
+            }
         }
+        
+        int delrow[] = {-1, 0, +1, 0}; // Array to represent row shifts: up, right, down, left
+        int delcol[] = {0, +1, +0, -1}; // Array to represent column shifts: up, right, down, left
+        
+        // Perform BFS traversal starting from boundary land cells
+        while(!q.empty()) {
+            int row = q.front().first;
+            int col = q.front().second;
+            q.pop();
+            
+            // Traverse all 4 directions
+            for(int i = 0; i < 4; i++) {
+                int nrow = row + delrow[i];
+                int ncol = col + delcol[i];
+                
+                // Check for valid coordinates, unvisited land cells, and mark them as visited
+                if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m 
+                   && vis[nrow][ncol] == 0 && grid[nrow][ncol] == 1) {
+                    q.push({nrow, ncol});
+                    vis[nrow][ncol] = 1;
+                }
+            }
+        }
+        
+        // Count the number of unvisited land cells
+        int cnt = 0;
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(grid[i][j] == 1 && vis[i][j] == 0) 
+                    cnt++; // Increment the count for unvisited land cells
+            }
+        }
+        return cnt; // Return the count of unvisited land cells
     }
-    return ans; // Return the total number of land cells that are not on the boundary
-}
+};
