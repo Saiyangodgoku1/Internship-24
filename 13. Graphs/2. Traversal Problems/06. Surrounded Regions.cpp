@@ -17,38 +17,41 @@ COMPLEXITY ANALYSIS:
 */
 
 void dfs(int i, int j, vector<vector<char>>& vis){
+    // Check if the current cell is within the boundaries and is unvisited ('O')
     if(i >= 0 && i < vis.size() && j >= 0 && j < vis[0].size() && vis[i][j] == 'O'){
-        vis[i][j] = '#';
-        dfs(i + 1, j, vis);
-        dfs(i - 1, j, vis);
-        dfs(i, j + 1, vis);
-        dfs(i, j - 1, vis);
+        vis[i][j] = '#'; // Mark the current cell as visited ('#')
+        // Recursively call DFS on the adjacent cells
+        dfs(i + 1, j, vis); // Down
+        dfs(i - 1, j, vis); // Up
+        dfs(i, j + 1, vis); // Right
+        dfs(i, j - 1, vis); // Left
     }
 }
 
 void solve(vector<vector<char>>& board) {
     int m = board.size(), n = board[0].size();
+    // Create a copy of the board to track visited cells
     vector<vector<char>> vis(board.begin(), board.end());
     
     // Perform DFS from border cells
     for(int i = 0; i < n; i++){
         if(vis[0][i] == 'O')
-            dfs(0, i, vis);
+            dfs(0, i, vis); // Top row
         if(vis[m - 1][i] == 'O')
-            dfs(m - 1, i, vis);
+            dfs(m - 1, i, vis); // Bottom row
     }
     for(int i = 0; i < m; i++){
         if(vis[i][0] == 'O')
-            dfs(i, 0, vis);
+            dfs(i, 0, vis); // Leftmost column
         if(vis[i][n - 1] == 'O')
-            dfs(i, n - 1, vis);
+            dfs(i, n - 1, vis); // Rightmost column
     }
     
-    // Update the original board
+    // Update the original board based on the visited cells
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             if(vis[i][j] == 'O')
-                board[i][j] = 'X';
+                board[i][j] = 'X'; // Flip 'O's surrounded by 'X's to 'X'
         }
     }
 }
