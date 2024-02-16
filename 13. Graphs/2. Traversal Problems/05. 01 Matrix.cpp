@@ -17,11 +17,12 @@ COMPLEXITY ANALYSIS:
 */
 
 vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
-    int m = mat.size(); 
-    int n = mat[0].size();
-    vector<vector<int>> dis(m, vector<int>(n, -1));
-    queue<pair<int, int>> q;
+    int m = mat.size(); // Number of rows in the matrix
+    int n = mat[0].size(); // Number of columns in the matrix
+    vector<vector<int>> dis(m, vector<int>(n, -1)); // Initialize a matrix to store distances with -1 initially
+    queue<pair<int, int>> q; // Initialize a queue to perform BFS
 
+    // Pushing all the cells with 0s into the queue and setting their distance to 0
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             if(mat[i][j] == 0){
@@ -31,26 +32,30 @@ vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
         }
     }
 
+    // Direction arrays for moving up, down, left, and right
     vector<int> dr = {-1, 1, 0, 0};
     vector<int> dc = {0, 0, -1, 1};
-    int level = 1;
+    int level = 1; // Initialize the level (distance) to 1
 
+    // BFS traversal to update distances
     while(!q.empty()){
-        int size = q.size();
+        int size = q.size(); // Current number of cells in the queue
         while(size--){
-            auto p = q.front();
+            auto p = q.front(); // Current cell coordinates
             q.pop();
             int x = p.first, y = p.second;
+            // Check all four adjacent cells
             for(int i = 0; i < 4; i++){
                 int nx = x + dr[i], ny = y + dc[i];
+                // Check if the adjacent cell is within the matrix boundaries and not visited yet
                 if(nx >= 0 && nx < m && ny >= 0 && ny < n && dis[nx][ny] == -1){
-                    dis[nx][ny] = level;
-                    q.push({nx, ny});
+                    dis[nx][ny] = level; // Update the distance of the adjacent cell
+                    q.push({nx, ny}); // Push the adjacent cell into the queue for further processing
                 }
             }
         }
-        level++;
+        level++; // Increment the distance level for the next iteration
     }
 
-    return dis;
+    return dis; // Return the matrix with updated distances
 }
