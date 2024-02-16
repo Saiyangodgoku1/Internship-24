@@ -16,42 +16,75 @@ COMPLEXITY ANALYSIS:
 - Space Complexity: O(m * n), where m is the number of rows and n is the number of columns in the matrix. We use additional space for the 'vis' matrix.
 */
 
-void dfs(int i, int j, vector<vector<char>>& vis){
-    // Check if the current cell is within the boundaries and is unvisited ('O')
-    if(i >= 0 && i < vis.size() && j >= 0 && j < vis[0].size() && vis[i][j] == 'O'){
-        vis[i][j] = '#'; // Mark the current cell as visited ('#')
-        // Recursively call DFS on the adjacent cells
-        dfs(i + 1, j, vis); // Down
-        dfs(i - 1, j, vis); // Up
-        dfs(i, j + 1, vis); // Right
-        dfs(i, j - 1, vis); // Left
-    }
-}
-
-void solve(vector<vector<char>>& board) {
-    int m = board.size(), n = board[0].size();
-    // Create a copy of the board to track visited cells
-    vector<vector<char>> vis(board.begin(), board.end());
-    
-    // Perform DFS from border cells
-    for(int i = 0; i < n; i++){
-        if(vis[0][i] == 'O')
-            dfs(0, i, vis); // Top row
-        if(vis[m - 1][i] == 'O')
-            dfs(m - 1, i, vis); // Bottom row
-    }
-    for(int i = 0; i < m; i++){
-        if(vis[i][0] == 'O')
-            dfs(i, 0, vis); // Leftmost column
-        if(vis[i][n - 1] == 'O')
-            dfs(i, n - 1, vis); // Rightmost column
-    }
-    
-    // Update the original board based on the visited cells
-    for(int i = 0; i < m; i++){
-        for(int j = 0; j < n; j++){
-            if(vis[i][j] == 'O')
-                board[i][j] = 'X'; // Flip 'O's surrounded by 'X's to 'X'
+class Solution{
+private:
+    // Depth-First Search (DFS) function to traverse 'O's and mark visited cells
+    void dfs(int row, int col, vector<vector<int>> &vis, 
+             vector<vector<char>> &mat, int delrow[], int delcol[]) {
+        vis[row][col] = 1; // Mark the current cell as visited
+        int n = mat.size(); // Number of rows in the matrix
+        int m = mat[0].size(); // Number of columns in the matrix
+        
+        // Check top, right, bottom, left neighbors of the current cell
+        for(int i = 0; i < 4; i++) {
+            int nrow = row + delrow[i]; // New row coordinate
+            int ncol = col + delcol[i]; // New column coordinate
+            
+            // Check for valid coordinates and unvisited 'O's
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m 
+               && !vis[nrow][ncol] && mat[nrow][ncol] == 'O') {
+                dfs(nrow, ncol, vis, mat, delrow, delcol); // Recursively call DFS
+            }
         }
     }
-}
+public:
+    // Function to fill surrounded 'O's with 'X's
+    vector<vector<char>> fill(int n, int m, 
+                               vector<vector<char>> mat) {
+        // Array to represent row shifts: up, right, down, left
+        int delrow[] = {-1, 0, +1, 0};
+        // Array to represent column shifts: up, right, down, left
+        int delcol[] = {0, 1, 0, -1};
+        
+        // Matrix to track visited cells
+        vector<vector<int>> vis(n, vector<int>(m,0));
+        
+        // Traverse the first and last rows
+        for(int j = 0; j < m; j++) {
+            // Check for unvisited 'O's in the boundary rows (first row and last row)
+            // First row
+            if(!vis[0][j] && mat[0][j] == 'O') {
+                dfs(0, j, vis, mat, delrow, delcol); // Start DFS traversal
+            }
+            
+            // Last row
+            if(!vis[n-1][j] && mat[n-1][j] == 'O') {
+                dfs(n-1, j, vis, mat, delrow, delcol); // Start DFS traversal
+            }
+        }
+        
+        // Traverse the first and last columns
+        for(int i = 0; i < n; i++) {
+            // Check for unvisited 'O's in the boundary columns (first column and last column)
+            // First column
+            if(!vis[i][0] && mat[i][0] == 'O') {
+                dfs(i, 0, vis, mat, delrow, delcol); // Start DFS traversal
+            }
+            
+            // Last column
+            if(!vis[i][m-1] && mat[i][m-1] == 'O') {
+                dfs(i, m-1, vis, mat, delrow, delcol); // Start DFS traversal
+            }
+        }
+        
+        // Convert unvisited 'O's to 'X's
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                if(!vis[i][j] && mat[i][j] == 'O') 
+                    mat[i][j] = 'X'; 
+            }
+        }
+        
+        return mat; // Return the modified matrix
+    }
+};
