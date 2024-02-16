@@ -13,26 +13,26 @@ COMPLEXITY ANALYSIS:
 */
 
 bool dfs(int node, int parent, vector<int> adj[], vector<bool>& vis){
-    vis[node] = true;
-    for(auto v:adj[node]){
-        if(!vis[v]){
-            if(dfs(v,node,adj,vis))
-                return true;
+    vis[node] = true; // Marking the current node as visited
+    for(auto v:adj[node]){ // Iterating through adjacent nodes of the current node
+        if(!vis[v]){ // If the adjacent node is not visited yet
+            if(dfs(v, node, adj, vis)) // Recursively call DFS on the adjacent node
+                return true; // If DFS returns true, there's a cycle
         }
-        else if(v!=parent){
-            return true;
+        else if(v != parent){ // If the adjacent node is visited and not the parent of the current node
+            return true; // This indicates a cycle
         }
     }
-    return false;
+    return false; // If no cycle is found in the current DFS traversal
 }
 
 bool isCycle(int V, vector<int> adj[]) {
-    vector<bool> vis(V);
-    for(int i=0; i<V; i++){
-        if(!vis[i]){
-            if(dfs(i,-1,adj,vis))
-                return true;
+    vector<bool> vis(V); // Initialize a boolean array to keep track of visited nodes
+    for(int i = 0; i < V; i++){
+        if(!vis[i]){ // If the current node is not visited yet
+            if(dfs(i, -1, adj, vis)) // Start DFS from the current node
+                return true; // If DFS returns true, there's a cycle
         }
     }
-    return false;
+    return false; // If no cycle is found in any DFS traversal
 }
